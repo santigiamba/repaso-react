@@ -1,56 +1,61 @@
 import { useState } from "react";
 
-function Tarea({ tarea, onEliminar, onCompletar }) {
-  return (
-    <div>
-      <p style={{ textDecoration: tarea.completada ? "line-through" : "none" }}>
-        {tarea.titulo}
-      </p>
-      {!tarea.completada && <button onClick={() => onCompletar(tarea.id)}>Completar</button>}
-      <button onClick={() => onEliminar(tarea.id)}>Eliminar</button>
-    </div>
-  );
-}
-
-export default function Ej12() {
+function Ej12() {
   const [tareas, setTareas] = useState([]);
   const [titulo, setTitulo] = useState("");
 
-  const agregarTarea = () => {
-    if (titulo.trim() === "") return;
-    setTareas([...tareas, { id: Date.now(), titulo, completada: false }]);
+  const handleChange = (e) => setTitulo(e.target.value);
+
+  const agregarTarea = (e) => {
+    e.preventDefault();
+    setTareas([
+      ...tareas,
+      { id: Date.now(), titulo: titulo, completada: false }
+    ]);
     setTitulo("");
   };
 
-  const eliminarTarea = id => setTareas(tareas.filter(t => t.id !== id));
+  const eliminarTarea = (id) => setTareas(tareas.filter(t => t.id !== id));
 
-  const completarTarea = id => setTareas(
-    tareas.map(t => t.id === id ? { ...t, completada: true } : t)
-  );
+  const marcarCompletada = (id) => {
+    setTareas(
+      tareas.map(t => t.id === id ? { ...t, completada: true } : t)
+    );
+  };
 
-  const completadas = tareas.filter(t => t.completada);
   const pendientes = tareas.filter(t => !t.completada);
+  const completadas = tareas.filter(t => t.completada);
 
   const total = tareas.length;
-  const totalCompletadas = tareas.reduce((acc, t) => acc + (t.completada ? 1 : 0), 0);
+  const totalCompletadas = tareas.reduce((acc, t) => t.completada ? acc + 1 : acc, 0);
+
+  const Tarea = ({ tarea, eliminar, marcarCompletada }) => (
+    <div>
+      <span style={{ textDecoration: tarea.completada ? "line-through" : "none" }}>
+        {tarea.titulo}
+      </span>
+      <button onClick={() => eliminar(tarea.id)}>Eliminar</button>
+      {!tarea.completada && <button onClick={() => marcarCompletada(tarea.id)}>Completar</button>}
+    </div>
+  );
 
   return (
     <div>
-      <h3>Ejercicio 12</h3>
-      <input value={titulo} onChange={e => setTitulo(e.target.value)} />
-      <button onClick={agregarTarea}>Agregar</button>
+      <h1>Lista de Tareas</h1>
+      <form onSubmit={agregarTarea}>
+        <input value={titulo} onChange={handleChange} placeholder="Título de la tarea" required />
+        <button type="submit">Agregar</button>
+      </form>
 
-      <h4>Pendientes</h4>
-      {pendientes.map(t => (
-        <Tarea key={t.id} tarea={t} onEliminar={eliminarTarea} onCompletar={completarTarea} />
-      ))}
+      <h2>Pendientes</h2>
+      {pendientes.map(t => <Tarea key={t.id} tarea={t} eliminar={eliminarTarea} marcarCompletada={marcarCompletada} />)}
 
-      <h4>Completadas</h4>
-      {completadas.map(t => (
-        <Tarea key={t.id} tarea={t} onEliminar={eliminarTarea} />
-      ))}
+      <h2>Completadas</h2>
+      {completadas.map(t => <Tarea key={t.id} tarea={t} eliminar={eliminarTarea} marcarCompletada={null} />)}
 
       <p>Total: {total} | Completadas: {totalCompletadas}</p>
     </div>
   );
 }
+
+export default Ej12;

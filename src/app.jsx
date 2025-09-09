@@ -10,6 +10,8 @@ import Ej9 from "./ejercicios/ej9";
 import Ej10 from "./ejercicios/ej10";
 import Ej11 from "./ejercicios/ej11";
 import Ej12 from "./ejercicios/ej12";
+import Ej13 from "./ejercicios/ej13";
+import Ej14 from "./ejercicios/ej14";
 
 export default function App() {
   return (
@@ -27,6 +29,8 @@ export default function App() {
       <Ej10 />
       <Ej11 />
       <Ej12 />
+      <Ej13 />
+      <Ej14 />
     </div>
   );
 }
